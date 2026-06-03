@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import TiptapEditor from '@/components/TiptapEditor'
+import AudioRecorder from '@/components/AudioRecorder'
 import { generateSlug } from '@/lib/utils'
 import Image from 'next/image'
 
@@ -15,6 +16,7 @@ export default function NouvelArticle() {
   const [excerpt, setExcerpt] = useState('')
   const [category, setCategory] = useState('')
   const [content, setContent] = useState('')
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -60,6 +62,7 @@ export default function NouvelArticle() {
         category: category.trim() || null,
         content,
         cover_url,
+        audio_url: audioUrl,
         published,
       })
 
@@ -197,6 +200,12 @@ export default function NouvelArticle() {
           </label>
           <TiptapEditor content={content} onChange={setContent} />
         </div>
+
+        {/* Audio */}
+        <AudioRecorder
+          existingAudioUrl={audioUrl}
+          onSave={(url) => setAudioUrl(url)}
+        />
 
         {/* Boutons bas de page */}
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-faint">

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import CommentForm from '@/components/CommentForm'
+import AudioPlayer from '@/components/AudioPlayer'
 import { formatDate } from '@/lib/utils'
 import { MENTAL_HEALTH_CATEGORIES } from '@/lib/config'
 import type { Comment } from '@/types'
@@ -114,6 +115,13 @@ export default async function BlogPost({ params }: Props) {
             priority
             sizes="100vw"
           />
+        </div>
+      )}
+
+      {/* Player audio */}
+      {post.audio_url && (
+        <div className="max-w-reading mx-auto">
+          <AudioPlayer src={post.audio_url} />
         </div>
       )}
 

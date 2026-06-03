@@ -6,6 +6,7 @@ export interface Post {
   excerpt: string | null
   cover_url: string | null
   category: string | null
+  audio_url: string | null
   published: boolean
   created_at: string
   updated_at: string

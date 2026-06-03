@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import TiptapEditor from '@/components/TiptapEditor'
+import AudioRecorder from '@/components/AudioRecorder'
 import Image from 'next/image'
 import type { Post } from '@/types'
 
@@ -17,6 +18,7 @@ export default function EditerArticle() {
   const [excerpt, setExcerpt] = useState('')
   const [category, setCategory] = useState('')
   const [content, setContent] = useState('')
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -38,6 +40,7 @@ export default function EditerArticle() {
       setExcerpt(data.excerpt ?? '')
       setCategory(data.category ?? '')
       setContent(data.content)
+      setAudioUrl(data.audio_url ?? null)
       setCoverPreview(data.cover_url)
     }
     setLoading(false)
@@ -87,6 +90,7 @@ export default function EditerArticle() {
           category: category.trim() || null,
           content,
           cover_url,
+          audio_url: audioUrl,
           published,
         })
         .eq('id', id)
@@ -245,6 +249,12 @@ export default function EditerArticle() {
             <TiptapEditor content={content} onChange={setContent} />
           ) : null}
         </div>
+
+        {/* Audio */}
+        <AudioRecorder
+          existingAudioUrl={audioUrl}
+          onSave={(url) => setAudioUrl(url)}
+        />
 
         {/* Boutons bas */}
         <div className="flex items-center justify-between pt-4 border-t border-faint">
