@@ -19,6 +19,7 @@ export default function AudioPlayer({ src }: { src: string }) {
   const [duration, setDuration] = useState(0)
   const [speedIdx, setSpeedIdx] = useState(1)
   const [loaded, setLoaded] = useState(false)
+  const [error, setError] = useState(false)
 
   const speed = SPEEDS[speedIdx]
   const progress = duration > 0 && isFinite(duration) ? (currentTime / duration) * 100 : 0
@@ -44,23 +45,24 @@ export default function AudioPlayer({ src }: { src: string }) {
       if (isFinite(audio.duration) && audio.duration > 0) {
         setDuration(audio.duration)
         setLoaded(true)
-      } else {
-        audio.currentTime = 1e101
       }
     }
 
     const onEnded = () => { setPlaying(false); playingRef.current = false }
+    const onError = () => { setLoaded(false); setError(true) }
 
     audio.addEventListener('timeupdate', onTimeUpdate)
     audio.addEventListener('loadedmetadata', onLoadedMetadata)
     audio.addEventListener('durationchange', trySetDuration)
     audio.addEventListener('ended', onEnded)
+    audio.addEventListener('error', onError)
 
     return () => {
       audio.removeEventListener('timeupdate', onTimeUpdate)
       audio.removeEventListener('loadedmetadata', onLoadedMetadata)
       audio.removeEventListener('durationchange', trySetDuration)
       audio.removeEventListener('ended', onEnded)
+      audio.removeEventListener('error', onError)
     }
   }, [])
 
@@ -73,9 +75,14 @@ export default function AudioPlayer({ src }: { src: string }) {
       playingRef.current = false
     } else {
       if (audio.currentTime > (isFinite(duration) ? duration : 0)) audio.currentTime = 0
-      await audio.play()
-      setPlaying(true)
-      playingRef.current = true
+      try {
+        await audio.play()
+        setPlaying(true)
+        playingRef.current = true
+      } catch {
+        setPlaying(false)
+        playingRef.current = false
+      }
     }
   }
 
@@ -102,6 +109,17 @@ export default function AudioPlayer({ src }: { src: string }) {
     const next = (speedIdx + 1) % SPEEDS.length
     setSpeedIdx(next)
     if (audio) audio.playbackRate = SPEEDS[next]
+  }
+
+  if (error) {
+    return (
+      <div className="border border-faint rounded-lg px-4 py-4 mb-10 bg-faint/20 flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-muted/40 flex-shrink-0" />
+        <span className="text-xs font-mono text-muted/60 tracking-widest uppercase">
+          Format audio non supporté par ce navigateur
+        </span>
+      </div>
+    )
   }
 
   return (
