@@ -4,23 +4,38 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'La Résidence',
-  description:
-    'Entrez dans la Résidence Massamba-Débat — sept appartements, sept solitudes.',
+  description: 'Entrez dans la Résidence Massamba-Débat — sept appartements, sept solitudes.',
 }
 
 export default function AppartementsPage() {
   return (
-      <div className="border-t border-faint pt-16 flex flex-col items-center text-center">
-        {/* ── Section citation + porte ── */}
-        <p className="text-xs font-mono text-muted tracking-widest uppercase mb-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-20">
+      {/* En-tête */}
+      <div className="max-w-2xl mb-16 md:mb-24">
+        <p className="text-xs font-mono text-muted tracking-widest uppercase mb-4 md:mb-5">
+          2 rue Théophile Obenga
+        </p>
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-ink leading-tight mb-5 md:mb-6">
+          La Résidence
+          <br />
+          Massamba-Débat
+        </h1>
+        <p className="text-muted leading-relaxed text-base md:text-lg">
+          Un immeuble ordinaire. Des vies ordinaires. Et dans chaque appartement,
+          un silence que personne autour ne semble entendre.
+        </p>
+      </div>
+
+      {/* Section citation + porte */}
+      <div className="border-t border-faint pt-12 md:pt-16 flex flex-col items-center text-center">
+        <p className="text-xs font-mono text-muted tracking-widest uppercase mb-6 md:mb-8">
           Extrait du roman
         </p>
-        <blockquote className="font-serif text-2xl md:text-3xl text-ink leading-snug max-w-2xl mb-14">
-          "Un immeuble ordinaire. Des vies ordinaires.
-          <br className="hidden md:block" /> Et dans chaque appartement, un silence que personne autour ne semble entendre."
+        <blockquote className="font-serif text-xl sm:text-2xl md:text-3xl text-ink leading-snug max-w-2xl mb-10 md:mb-14 px-2">
+          "Un immeuble, sept solitudes, et au dernier étage,
+          <br className="hidden sm:block" /> celle que personne n'a vue venir."
         </blockquote>
 
-        {/* Porte ou message d'attente */}
         {BOOK_PUBLISHED ? (
           <DoorAnimation />
         ) : (
@@ -28,14 +43,14 @@ export default function AppartementsPage() {
             <div
               className="rounded-sm border border-faint/60"
               style={{
-                width: 168,
-                height: 272,
+                width: 140,
+                height: 220,
                 background: 'linear-gradient(180deg, #ede8de 0%, #e8e0d3 100%)',
-                boxShadow: 'inset 0 0 0 6px #d6cfc3',
+                boxShadow: 'inset 0 0 0 5px #d6cfc3',
                 opacity: 0.35,
               }}
             />
-            <p className="font-serif text-xl text-muted mt-4">
+            <p className="font-serif text-lg md:text-xl text-muted mt-3 md:mt-4">
               Les portes sont encore fermées.
             </p>
             <p className="text-sm font-mono text-muted/60 tracking-wide">
@@ -44,5 +59,6 @@ export default function AppartementsPage() {
           </div>
         )}
       </div>
+    </div>
   )
 }

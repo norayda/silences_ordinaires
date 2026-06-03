@@ -18,6 +18,7 @@ body::before {
 /* ─── Base ─── */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -30,8 +31,12 @@ body {
 /* ─── Prose (contenu des articles) ─── */
 .prose {
   color: #1a1714;
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.85;
+}
+
+@media (min-width: 640px) {
+  .prose { font-size: 1.0625rem; }
 }
 
 .prose h2 {

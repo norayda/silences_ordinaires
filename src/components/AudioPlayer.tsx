@@ -33,7 +33,6 @@ export default function AudioPlayer({ src }: { src: string }) {
       if (isFinite(audio.duration) && audio.duration > 0) {
         setDuration(audio.duration)
         setLoaded(true)
-        // Si on avait seeké pour forcer la durée, revenir au début
         if (audio.currentTime > audio.duration - 0.5 && !playingRef.current) {
           audio.currentTime = 0
           setCurrentTime(0)
@@ -46,24 +45,21 @@ export default function AudioPlayer({ src }: { src: string }) {
         setDuration(audio.duration)
         setLoaded(true)
       } else {
-        // Workaround WebM sans durée : seeker à la fin force le navigateur
-        // à télécharger le fichier et calculer la durée réelle
         audio.currentTime = 1e101
       }
     }
 
-    const onDurationChange = () => trySetDuration()
     const onEnded = () => { setPlaying(false); playingRef.current = false }
 
     audio.addEventListener('timeupdate', onTimeUpdate)
     audio.addEventListener('loadedmetadata', onLoadedMetadata)
-    audio.addEventListener('durationchange', onDurationChange)
+    audio.addEventListener('durationchange', trySetDuration)
     audio.addEventListener('ended', onEnded)
 
     return () => {
       audio.removeEventListener('timeupdate', onTimeUpdate)
       audio.removeEventListener('loadedmetadata', onLoadedMetadata)
-      audio.removeEventListener('durationchange', onDurationChange)
+      audio.removeEventListener('durationchange', trySetDuration)
       audio.removeEventListener('ended', onEnded)
     }
   }, [])
@@ -76,10 +72,7 @@ export default function AudioPlayer({ src }: { src: string }) {
       setPlaying(false)
       playingRef.current = false
     } else {
-      // Si on était au début après le workaround durée, s'assurer qu'on part de 0
-      if (audio.currentTime > (isFinite(duration) ? duration : 0)) {
-        audio.currentTime = 0
-      }
+      if (audio.currentTime > (isFinite(duration) ? duration : 0)) audio.currentTime = 0
       await audio.play()
       setPlaying(true)
       playingRef.current = true
@@ -112,7 +105,7 @@ export default function AudioPlayer({ src }: { src: string }) {
   }
 
   return (
-    <div className="border border-faint rounded-lg px-5 py-4 mb-10 bg-faint/20">
+    <div className="border border-faint rounded-lg px-4 py-4 mb-10 bg-faint/20">
       <audio ref={audioRef} src={src} preload="metadata" />
 
       {/* Label */}
@@ -129,7 +122,7 @@ export default function AudioPlayer({ src }: { src: string }) {
         onClick={handleSeekBar}
       >
         <div
-          className="absolute left-0 top-0 h-full bg-accent rounded-full transition-none"
+          className="absolute left-0 top-0 h-full bg-accent rounded-full"
           style={{ width: `${progress}%` }}
         />
         <div
@@ -138,36 +131,32 @@ export default function AudioPlayer({ src }: { src: string }) {
         />
       </div>
 
-      {/* Contrôles */}
-      <div className="flex items-center justify-between">
+      {/* Contrôles — compact sur mobile */}
+      <div className="flex items-center justify-between gap-2">
         {/* Temps */}
-        <span className="text-xs font-mono text-muted tabular-nums w-28">
+        <span className="text-xs font-mono text-muted tabular-nums flex-shrink-0">
           {formatTime(currentTime)}
-          <span className="text-muted/40 mx-1">/</span>
+          <span className="text-muted/40 mx-0.5">/</span>
           {loaded ? formatTime(duration) : '…'}
         </span>
 
         {/* Boutons centraux */}
-        <div className="flex items-center gap-5">
-          {/* − 10s */}
+        <div className="flex items-center gap-3 sm:gap-5">
           <button type="button" onClick={() => seek(-10)}
             className="flex flex-col items-center gap-0.5 text-muted hover:text-ink transition-colors"
-            title="Reculer 10 secondes">
+            title="Reculer 10s">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-              <path d="M3 3v5h5" />
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" />
             </svg>
             <span className="font-mono" style={{ fontSize: 9 }}>10</span>
           </button>
 
-          {/* Play / Pause */}
           <button type="button" onClick={togglePlay} disabled={!loaded}
-            className="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center hover:bg-ink/80 disabled:opacity-30 transition-colors"
+            className="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center hover:bg-ink/80 disabled:opacity-30 transition-colors flex-shrink-0"
             aria-label={playing ? 'Pause' : 'Lecture'}>
             {playing ? (
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="6" y="4" width="4" height="16" rx="1" />
-                <rect x="14" y="4" width="4" height="16" rx="1" />
+                <rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" />
               </svg>
             ) : (
               <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 1 }}>
@@ -176,13 +165,11 @@ export default function AudioPlayer({ src }: { src: string }) {
             )}
           </button>
 
-          {/* + 10s */}
           <button type="button" onClick={() => seek(10)}
             className="flex flex-col items-center gap-0.5 text-muted hover:text-ink transition-colors"
-            title="Avancer 10 secondes">
+            title="Avancer 10s">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-              <path d="M21 3v5h-5" />
+              <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" />
             </svg>
             <span className="font-mono" style={{ fontSize: 9 }}>10</span>
           </button>
@@ -190,8 +177,8 @@ export default function AudioPlayer({ src }: { src: string }) {
 
         {/* Vitesse */}
         <button type="button" onClick={cycleSpeed}
-          className="text-xs font-mono text-muted hover:text-ink border border-faint rounded px-2 py-1 transition-colors w-14 text-center"
-          title="Changer la vitesse de lecture">
+          className="text-xs font-mono text-muted hover:text-ink border border-faint rounded px-2 py-1 transition-colors flex-shrink-0"
+          title="Vitesse de lecture">
           {speed === 1 ? '1×' : `${speed}×`}
         </button>
       </div>
