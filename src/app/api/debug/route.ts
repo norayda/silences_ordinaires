@@ -15,7 +15,7 @@ export async function GET() {
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     const { data, error, count } = await supabase
       .from('posts')

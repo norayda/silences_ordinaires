@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export const revalidate = 60
 
 export default async function APropos() {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const { data: rows } = await supabase.from('settings').select('key, value')
   const settings: Record<string, string> = {}
@@ -59,8 +59,7 @@ export default async function APropos() {
           </p>
           <p>
             Le blog accompagne un roman en cours d'écriture :{' '}
-            <em>Silences Ordinaires</em>, dont vous pouvez découvrir la
-            structure et les appartements fictifs dans la section{' '}
+            <em>Silences Ordinaires</em>, dont vous pouvez découvrir un apercu dans la section{' '}
             <a href="/appartements">La Résidence</a>.
           </p>
         </div>

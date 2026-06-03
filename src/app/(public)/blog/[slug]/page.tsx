@@ -13,7 +13,7 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data: post } = await supabase
     .from('posts')
     .select('title, excerpt')
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export const revalidate = 60
 
 export default async function BlogPost({ params }: Props) {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   // Vérifier si l'admin est connecté (pour la preview des brouillons)
   const {
@@ -39,8 +39,9 @@ export default async function BlogPost({ params }: Props) {
 
   // Si non connecté → uniquement les posts publiés
   // Si connecté (admin) → tous les posts (preview brouillon possible)
-  const query = supabase.from('posts').select('*').eq('slug', params.slug)
-  const { data: post } = await (user ? query : query.eq('published', true)).single()
+  const { data: post } = user
+    ? await supabase.from('posts').select('*').eq('slug', params.slug).single()
+    : await supabase.from('posts').select('*').eq('slug', params.slug).eq('published', true).single()
 
   if (!post) notFound()
 

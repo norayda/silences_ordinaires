@@ -21,7 +21,7 @@ export const revalidate = 60
 
 export default async function CategoryPage({ params }: Props) {
   const category = decodeURIComponent(params.category)
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const { data: posts } = await supabase
     .from('posts')

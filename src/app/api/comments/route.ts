@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Vérifier que l'article existe et est publié
     const { data: post } = await supabase

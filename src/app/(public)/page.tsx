@@ -6,7 +6,7 @@ import type { Post } from '@/types'
 export const revalidate = 60
 
 export default async function HomePage() {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const { data: posts } = await supabase
     .from('posts')
