@@ -10,24 +10,9 @@ export const metadata: Metadata = {
 export default function AppartementsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-20">
-      {/* En-tête */}
-      <div className="max-w-2xl mb-16 md:mb-24">
-        <p className="text-xs font-mono text-muted tracking-widest uppercase mb-4 md:mb-5">
-          2 rue Théophile Obenga
-        </p>
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-ink leading-tight mb-5 md:mb-6">
-          La Résidence
-          <br />
-          Massamba-Débat
-        </h1>
-        <p className="text-muted leading-relaxed text-base md:text-lg">
-          Un immeuble ordinaire. Des vies ordinaires. Et dans chaque appartement,
-          un silence que personne autour ne semble entendre.
-        </p>
-      </div>
 
-      {/* Section citation + porte */}
-      <div className="border-t border-faint pt-12 md:pt-16 flex flex-col items-center text-center">
+      {/* Portail + citation — toujours affiché en premier */}
+      <div className="flex flex-col items-center text-center mb-16 md:mb-24">
         <p className="text-xs font-mono text-muted tracking-widest uppercase mb-6 md:mb-8">
           Extrait du roman
         </p>
@@ -43,8 +28,8 @@ export default function AppartementsPage() {
             <div
               className="rounded-sm border border-faint/60"
               style={{
-                width: 140,
-                height: 220,
+                width: 288,
+                height: 252,
                 background: 'linear-gradient(180deg, #ede8de 0%, #e8e0d3 100%)',
                 boxShadow: 'inset 0 0 0 5px #d6cfc3',
                 opacity: 0.35,
@@ -59,6 +44,8 @@ export default function AppartementsPage() {
           </div>
         )}
       </div>
+
+
     </div>
   )
 }
