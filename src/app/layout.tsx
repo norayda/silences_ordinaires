@@ -28,6 +28,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: ['/og-image.jpg'],
   },
+  appleWebApp: {
+    capable: true,
+    title: 'Silences Ordinaires',
+    statusBarStyle: 'black-translucent',
+  },
 }
 
 export default function RootLayout({
