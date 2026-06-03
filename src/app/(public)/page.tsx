@@ -20,9 +20,9 @@ export default async function HomePage() {
     .eq('published', true)
     .not('category', 'is', null)
 
-  const uniqueCategories = [
-    ...new Set((categories ?? []).map((r) => r.category).filter(Boolean)),
-  ] as string[]
+  const uniqueCategories = Array.from(
+    new Set((categories ?? []).map((r) => r.category).filter(Boolean))
+  ) as string[]
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-14 md:py-20">
