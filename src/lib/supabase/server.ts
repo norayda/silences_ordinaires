@@ -18,7 +18,7 @@ export function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // Server Component — lecture seule, ignoré
+            // Server Component — cookies en lecture seule, ignoré
           }
         },
       },
