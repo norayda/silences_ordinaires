@@ -71,14 +71,14 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 space-y-16">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-16">
       {/* Section articles */}
       <section>
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-serif text-2xl text-ink">Articles</h1>
           <Link
             href="/admin/nouveau"
-            className="px-4 py-2 bg-ink text-paper text-xs font-mono tracking-widest uppercase rounded hover:bg-ink/80 transition-colors"
+            className="px-3 py-2 sm:px-4 bg-ink text-paper text-xs font-mono tracking-widest uppercase rounded hover:bg-ink/80 transition-colors whitespace-nowrap"
           >
             + Nouvel article
           </Link>
@@ -95,26 +95,26 @@ export default function AdminDashboard() {
             {posts.map((post) => (
               <div
                 key={post.id}
-                className="flex items-center gap-4 px-5 py-4 bg-paper hover:bg-faint/30 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 bg-paper hover:bg-faint/30 transition-colors"
               >
-                {/* Statut */}
-                <span
-                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    post.published ? 'bg-emerald-500' : 'bg-muted/40'
-                  }`}
-                />
-
-                {/* Titre */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-serif text-ink truncate">{post.title}</p>
-                  <p className="text-xs font-mono text-muted mt-0.5">
-                    {formatDate(post.created_at)} —{' '}
-                    {post.published ? 'Publié' : 'Brouillon'}
-                  </p>
+                {/* Statut + Titre */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <span
+                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      post.published ? 'bg-emerald-500' : 'bg-muted/40'
+                    }`}
+                  />
+                  <div className="min-w-0">
+                    <p className="font-serif text-ink truncate">{post.title}</p>
+                    <p className="text-xs font-mono text-muted mt-0.5">
+                      {formatDate(post.created_at)} —{' '}
+                      {post.published ? 'Publié' : 'Brouillon'}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3 flex-shrink-0">
+                <div className="flex items-center gap-3 flex-shrink-0 pl-5 sm:pl-0">
                   <Link
                     href={`/blog/${post.slug}`}
                     target="_blank"
@@ -171,13 +171,13 @@ export default function AdminDashboard() {
                 key={comment.id}
                 className="border border-faint rounded p-5 bg-paper"
               >
-                <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                   <div>
                     <span className="font-serif text-ink text-sm">
                       {comment.author_name}
                     </span>
                     {comment.posts && (
-                      <span className="text-xs font-mono text-muted ml-3">
+                      <span className="text-xs font-mono text-muted ml-2">
                         sur «{' '}
                         <Link
                           href={`/blog/${comment.posts.slug}`}

@@ -76,11 +76,11 @@ export default function NouvelArticle() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       {/* Barre d'actions */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10">
         <div>
-          <h1 className="font-serif text-3xl text-ink">Nouvel article</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl text-ink">Nouvel article</h1>
           <p className="text-xs font-mono text-muted mt-1">
             Résidence Massamba-Débat
           </p>
@@ -89,14 +89,14 @@ export default function NouvelArticle() {
           <button
             onClick={() => save(false)}
             disabled={saving}
-            className="px-4 py-2.5 text-xs font-mono text-muted border border-faint rounded hover:border-muted disabled:opacity-50 transition-colors"
+            className="px-3 sm:px-4 py-2.5 text-xs font-mono text-muted border border-faint rounded hover:border-muted disabled:opacity-50 transition-colors whitespace-nowrap"
           >
-            Enregistrer brouillon
+            Brouillon
           </button>
           <button
             onClick={() => save(true)}
             disabled={saving}
-            className="px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded hover:bg-ink/80 disabled:opacity-50 transition-colors"
+            className="px-3 sm:px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded hover:bg-ink/80 disabled:opacity-50 transition-colors whitespace-nowrap"
           >
             {saving ? 'Publication...' : 'Publier'}
           </button>
@@ -208,27 +208,29 @@ export default function NouvelArticle() {
         />
 
         {/* Boutons bas de page */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-faint">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 pt-4 border-t border-faint">
           <button
             onClick={() => router.push('/admin')}
-            className="px-4 py-2.5 text-xs font-mono text-muted hover:text-ink transition-colors"
+            className="text-xs font-mono text-muted hover:text-ink transition-colors"
           >
             Annuler
           </button>
-          <button
-            onClick={() => save(false)}
-            disabled={saving}
-            className="px-4 py-2.5 text-xs font-mono text-muted border border-faint rounded hover:border-muted disabled:opacity-50 transition-colors"
-          >
-            Enregistrer brouillon
-          </button>
-          <button
-            onClick={() => save(true)}
-            disabled={saving}
-            className="px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded hover:bg-ink/80 disabled:opacity-50 transition-colors"
-          >
-            {saving ? 'Publication...' : 'Publier'}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => save(false)}
+              disabled={saving}
+              className="px-3 sm:px-4 py-2.5 text-xs font-mono text-muted border border-faint rounded hover:border-muted disabled:opacity-50 transition-colors whitespace-nowrap"
+            >
+              Brouillon
+            </button>
+            <button
+              onClick={() => save(true)}
+              disabled={saving}
+              className="px-3 sm:px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded hover:bg-ink/80 disabled:opacity-50 transition-colors whitespace-nowrap"
+            >
+              {saving ? 'Publication...' : 'Publier'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

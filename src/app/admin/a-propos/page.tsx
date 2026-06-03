@@ -89,10 +89,10 @@ export default function AdminAPropos() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-10">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-10">
         <div>
-          <h1 className="font-serif text-3xl text-ink">Page À propos</h1>
+          <h1 className="font-serif text-2xl sm:text-3xl text-ink">Page À propos</h1>
           <p className="text-xs font-mono text-muted mt-1">
             Présentation de l'auteure — visible sur /a-propos
           </p>
@@ -100,7 +100,7 @@ export default function AdminAPropos() {
         <button
           onClick={save}
           disabled={saving}
-          className="px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded hover:bg-ink/80 disabled:opacity-50 transition-colors"
+          className="self-start sm:self-auto px-4 py-2.5 text-xs font-mono bg-ink text-paper rounded hover:bg-ink/80 disabled:opacity-50 transition-colors whitespace-nowrap"
         >
           {saving ? 'Enregistrement...' : saved ? '✓ Enregistré' : 'Enregistrer'}
         </button>
