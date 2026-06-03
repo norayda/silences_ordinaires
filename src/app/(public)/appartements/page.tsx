@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 
 export default function AppartementsPage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-20">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-16">
 
-      {/* Portail + citation — toujours affiché en premier */}
-      <div className="flex flex-col items-center text-center mb-16 md:mb-24">
+      {/* Portail + citation */}
+      <div className="flex flex-col items-center text-center">
         <p className="text-xs font-mono text-muted tracking-widest uppercase mb-6 md:mb-8">
           Extrait du roman
         </p>
