@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { AUTHOR_IMAGE_URL } from '@/lib/config'
+import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -8,7 +8,25 @@ export const metadata: Metadata = {
     'Le blog Silences Ordinaires — une voix littéraire sur les solitudes invisibles.',
 }
 
-export default function APropos() {
+export const revalidate = 60
+
+export default async function APropos() {
+  const supabase = await createClient()
+
+  const { data: rows } = await supabase.from('settings').select('key, value')
+  const settings: Record<string, string> = {}
+  for (const row of rows ?? []) settings[row.key] = row.value
+
+  const authorName = settings.author_name || ''
+  const authorBio = settings.author_bio || ''
+  const authorImageUrl = settings.author_image_url || ''
+
+  // Convertir les sauts de ligne en paragraphes
+  const bioParagraphs = authorBio
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-14 md:py-20">
       {/* ── Section Blog ── */}
@@ -58,62 +76,42 @@ export default function APropos() {
           <div className="flex flex-col md:flex-row gap-10 md:gap-14 items-start">
             {/* Photo */}
             <div className="flex-shrink-0">
-              {AUTHOR_IMAGE_URL ? (
+              {authorImageUrl ? (
                 <div className="relative w-48 h-60 overflow-hidden rounded-sm">
                   <Image
-                    src={AUTHOR_IMAGE_URL}
-                    alt="Photo de l'auteure"
+                    src={authorImageUrl}
+                    alt={authorName || "Photo de l'auteure"}
                     fill
                     className="object-cover grayscale"
                     sizes="192px"
                   />
                 </div>
               ) : (
-                <div
-                  className="w-48 h-60 rounded-sm bg-faint border border-faint/80 flex items-center justify-center"
-                  title="Ajoutez NEXT_PUBLIC_AUTHOR_IMAGE_URL dans .env.local"
-                >
-                  <span className="font-serif text-5xl text-muted/30">
-                    S
-                  </span>
+                <div className="w-48 h-60 rounded-sm bg-faint border border-faint/80 flex items-center justify-center">
+                  <span className="font-serif text-5xl text-muted/30">S</span>
                 </div>
-              )}
-              {!AUTHOR_IMAGE_URL && (
-                <p className="text-xs font-mono text-muted/50 mt-2 max-w-[12rem] leading-relaxed">
-                  Ajoutez votre photo via{' '}
-                  <code className="text-muted">
-                    NEXT_PUBLIC_AUTHOR_IMAGE_URL
-                  </code>{' '}
-                  dans <code className="text-muted">.env.local</code>
-                </p>
               )}
             </div>
 
             {/* Bio */}
-            <div className="flex-1 prose">
-              {/*
-               * ─── À personnaliser ───────────────────────────────────────
-               * Remplacez ce contenu par votre biographie.
-               * ───────────────────────────────────────────────────────────
-               */}
-              <h2 className="font-serif text-2xl text-ink mt-0">
-                Votre nom ici
-              </h2>
-              <p>
-                [Présentez-vous ici — quelques lignes sur qui vous êtes, votre
-                rapport à l'écriture, ce qui vous a amené·e à créer ce blog.]
-              </p>
-              <p>
-                [Vous pouvez évoquer votre parcours, vos influences littéraires,
-                les raisons pour lesquelles les thèmes des solitudes invisibles
-                résonnent pour vous.]
-              </p>
-              <p>
-                Pour toute demande :{' '}
-                <a href="mailto:contact@silencesordinaires.fr">
-                  contact@silencesordinaires.fr
-                </a>
-              </p>
+            <div className="flex-1">
+              {authorName && (
+                <h2 className="font-serif text-2xl text-ink mb-6">
+                  {authorName}
+                </h2>
+              )}
+
+              {bioParagraphs.length > 0 ? (
+                <div className="prose">
+                  {bioParagraphs.map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted font-serif italic text-sm">
+                  La biographie sera disponible prochainement.
+                </p>
+              )}
             </div>
           </div>
         </div>

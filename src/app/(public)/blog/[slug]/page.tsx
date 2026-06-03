@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CommentForm from '@/components/CommentForm'
 import { formatDate } from '@/lib/utils'
+import { MENTAL_HEALTH_CATEGORIES } from '@/lib/config'
 import type { Comment } from '@/types'
 import type { Metadata } from 'next'
 
@@ -17,11 +18,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .from('posts')
     .select('title, excerpt')
     .eq('slug', params.slug)
-    .eq('published', true)
     .single()
 
   if (!post) return {}
-
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
@@ -33,12 +32,15 @@ export const revalidate = 60
 export default async function BlogPost({ params }: Props) {
   const supabase = await createClient()
 
-  const { data: post } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('slug', params.slug)
-    .eq('published', true)
-    .single()
+  // Vérifier si l'admin est connecté (pour la preview des brouillons)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // Si non connecté → uniquement les posts publiés
+  // Si connecté (admin) → tous les posts (preview brouillon possible)
+  const query = supabase.from('posts').select('*').eq('slug', params.slug)
+  const { data: post } = await (user ? query : query.eq('published', true)).single()
 
   if (!post) notFound()
 
@@ -48,6 +50,10 @@ export default async function BlogPost({ params }: Props) {
     .eq('post_id', post.id)
     .eq('approved', true)
     .order('created_at', { ascending: true })
+
+  const showMentalHealthBanner = MENTAL_HEALTH_CATEGORIES.includes(
+    post.category ?? ''
+  )
 
   return (
     <article className="max-w-6xl mx-auto px-6 py-12 md:py-20">
@@ -61,11 +67,31 @@ export default async function BlogPost({ params }: Props) {
         </Link>
       </div>
 
+      {/* Bandeau brouillon (visible uniquement pour l'admin connecté) */}
+      {!post.published && user && (
+        <div className="mb-8 px-4 py-3 bg-amber-50 border border-amber-200 rounded text-xs font-mono text-amber-700 text-center tracking-wide">
+          BROUILLON — cet article n'est pas encore visible par le public
+        </div>
+      )}
+
       {/* En-tête */}
       <header className="max-w-reading mx-auto mb-12">
-        <time className="text-xs font-mono text-muted block mb-4">
-          {formatDate(post.created_at)}
-        </time>
+        <div className="flex items-center gap-3 mb-4">
+          <time className="text-xs font-mono text-muted">
+            {formatDate(post.created_at)}
+          </time>
+          {post.category && (
+            <>
+              <span className="text-muted/30 text-xs">·</span>
+              <Link
+                href={`/categories/${encodeURIComponent(post.category)}`}
+                className="text-xs font-mono text-muted hover:text-ink transition-colors"
+              >
+                {post.category}
+              </Link>
+            </>
+          )}
+        </div>
         <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-ink leading-tight mb-6">
           {post.title}
         </h1>
@@ -96,25 +122,26 @@ export default async function BlogPost({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
-      {/* Séparateur */}
       <div className="max-w-reading mx-auto mb-16">
         <hr className="border-none border-t border-faint" />
       </div>
 
-      {/* Lien 3114 */}
-      <div className="max-w-reading mx-auto mb-16 p-5 border border-faint rounded bg-faint/30">
-        <p className="text-sm text-muted leading-relaxed">
-          Si ce texte a résonné en vous ou en quelqu'un que vous connaissez,
-          des professionnels sont disponibles 24h/24 au{' '}
-          <a
-            href="tel:3114"
-            className="text-ink font-semibold hover:text-accent transition-colors"
-          >
-            3114
-          </a>{' '}
-          — numéro national de prévention du suicide, gratuit et confidentiel.
-        </p>
-      </div>
+      {/* Lien 3114 — uniquement pour les catégories santé mentale */}
+      {showMentalHealthBanner && (
+        <div className="max-w-reading mx-auto mb-16 p-5 border border-faint rounded bg-faint/30">
+          <p className="text-sm text-muted leading-relaxed">
+            Si ce texte a résonné en vous ou en quelqu'un que vous connaissez,
+            des professionnels sont disponibles 24h/24 au{' '}
+            <a
+              href="tel:3114"
+              className="text-ink font-semibold hover:text-accent transition-colors"
+            >
+              3114
+            </a>{' '}
+            — numéro national de prévention du suicide, gratuit et confidentiel.
+          </p>
+        </div>
+      )}
 
       {/* Commentaires */}
       <section className="max-w-reading mx-auto">
